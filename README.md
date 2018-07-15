@@ -26,6 +26,7 @@ The baseline logic in command line interface.
 
 ## To Do
 
+* Create all tests and documentation
 * Database to record game history
 * Better AI that utilizes the game history
 * Web implementation
