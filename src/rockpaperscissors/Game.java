@@ -8,11 +8,12 @@ public class Game {
 
     private int playerWins, botWins;
     private boolean running;
-    private ArrayList<Handsigns> playerHandsigns, botHandsigns;
+    private ArrayList<Handsign> playerHandsigns, botHandsigns;
 
     public Game(ArrayList playerHandsigns, ArrayList botHansigns) {
         this.playerHandsigns = playerHandsigns;
         this.botHandsigns = botHansigns;
+        this.running = false;
     }
 
     public Game() {
@@ -23,51 +24,53 @@ public class Game {
         this.running = false;
     }
 
-    public ArrayList<Handsigns> getPlayerHandsigns() {
+    public ArrayList<Handsign> getPlayerHandsigns() {
         return playerHandsigns;
     }
 
-    public void setPlayerHandsigns(ArrayList<Handsigns> playerHandsigns) {
+    public void setPlayerHandsigns(ArrayList<Handsign> playerHandsigns) {
         this.playerHandsigns = playerHandsigns;
     }
 
-    public ArrayList<Handsigns> getBotHandsigns() {
+    public ArrayList<Handsign> getBotHandsigns() {
         return botHandsigns;
     }
 
-    public void setBotHandsigns(ArrayList<Handsigns> botHandsigns) {
+    public void setBotHandsigns(ArrayList<Handsign> botHandsigns) {
         this.botHandsigns = botHandsigns;
     }
 
-    public void addPlayerHandsign(Handsigns handsign) {
+    public void addPlayerHandsign(Handsign handsign) {
         this.playerHandsigns.add(handsign);
     }
 
-    public void addBotHandsign(Handsigns handsign) {
+    public void addBotHandsign(Handsign handsign) {
         this.botHandsigns.add(handsign);
     }
 
-    private static Handsigns convertToHandsign(String hs) {
+    private static Handsign convertToHandsign(String hs) {
         if (hs.equalsIgnoreCase("r") || hs.equalsIgnoreCase("rock")) {
-            return Handsigns.ROCK;
+            return Handsign.ROCK;
         } else if (hs.equalsIgnoreCase("p") || hs.equalsIgnoreCase("paper")) {
-            return Handsigns.PAPER;
+            return Handsign.PAPER;
         } else if (hs.equalsIgnoreCase("s") || hs.equalsIgnoreCase("scissors")) {
-            return Handsigns.SCISSORS;
+            return Handsign.SCISSORS;
         } else {
             return null;
         }
     }
+
     // this is where the magic happens
     public void play() {
         this.startInfo();
-        
+
         Scanner scanner = new Scanner(System.in);
-        Handsigns playerHs = null;
+        AI ai = new AI();
+        Handsign playerHs = null;
         this.running = true;
 
         while (this.running) {
-            Handsigns botHs = betterAI(playerHs);
+            Handsign botHs = ai.levelOne(playerHs);
 
             System.out.print("Choose your handsign: ");
             String playerInput = scanner.nextLine();
@@ -100,41 +103,15 @@ public class Game {
         this.running = false;
     }
 
-    private void result(Handsigns playerHs, Handsigns botHs) {
+    private void result(Handsign playerHs, Handsign botHs) {
         if (playerHs == botHs) {
             System.out.println("It's a tie!");
-        } else if (playerHs == Handsigns.wins(botHs)) {
+        } else if (playerHs == Handsign.wins(botHs)) {
             System.out.println("You won!");
             this.playerWins++;
         } else {
             System.out.println("You lost!");
             this.botWins++;
-        }
-    }
-
-    // Randomly plays any of the handsigns
-    private static Handsigns dumbAI() {
-        Random r = new Random();
-        int res = r.nextInt(Handsigns.values().length);
-        return Handsigns.values()[res];
-    }
-
-    // Plays the handsign that would lose to the player's previous handsign
-    // with a 50% chance and either of the other hands with a 50% chance
-    private static Handsigns betterAI(Handsigns playerHs) {
-        if (playerHs == null) {
-            return dumbAI();
-        }
-        Random r = new Random();
-        int res = r.nextInt(4);
-
-        switch (res) {
-            case 0:
-                return playerHs;
-            case 1:
-                return Handsigns.wins(playerHs);
-            default:
-                return Handsigns.losesTo(playerHs);
         }
     }
 }
